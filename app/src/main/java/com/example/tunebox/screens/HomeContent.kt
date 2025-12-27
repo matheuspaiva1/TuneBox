@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.tunebox.data.models.SpotifyAlbum
+import com.example.tunebox.data.models.SpotifyTrack
 import com.example.tunebox.data.repository.SpotifyRepository
 import kotlinx.coroutines.launch
 
@@ -25,7 +29,9 @@ fun HomeContent(
     onToggleTheme: () -> Unit,
     accessToken: String
 ) {
+    var selectedTab by remember { mutableStateOf(0) }
     var albums by remember { mutableStateOf<List<SpotifyAlbum>>(emptyList()) }
+    var tracks by remember { mutableStateOf<List<SpotifyTrack>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
     val scope = rememberCoroutineScope()
@@ -33,7 +39,8 @@ fun HomeContent(
 
     LaunchedEffect(accessToken) {
         scope.launch {
-            albums = repository.getNewReleases(accessToken)
+            albums = repository.getMostListenedAlbums(accessToken)
+            tracks = repository.getTopTracks(accessToken)
             isLoading = false
         }
     }
@@ -44,9 +51,28 @@ fun HomeContent(
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
+        // Abas
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            TabButton(
+                text = "Álbuns",
+                isSelected = selectedTab == 0,
+                onClick = { selectedTab = 0 }
+            )
+            TabButton(
+                text = "Músicas",
+                isSelected = selectedTab == 1,
+                onClick = { selectedTab = 1 }
+            )
+        }
+
         Text(
-            text = "Most Populars",
-            fontSize = 24.sp,
+            text = "Mais Escutados",
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -60,16 +86,60 @@ fun HomeContent(
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(albums) { album ->
-                    AlbumCard(album)
+            when (selectedTab) {
+                0 -> {
+                    // Tab de Albums - Albums que você mais escuta
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(albums) { album ->
+                            AlbumCard(album)
+                        }
+                    }
+                }
+                1 -> {
+                    // Tab de Musics - Tracks mais populares
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(tracks) { track ->
+                            TrackCard(track)
+                        }
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun TabButton(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .height(44.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isSelected)
+                MaterialTheme.colorScheme.primary
+            else
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Text(
+            text = text,
+            color = if (isSelected)
+                MaterialTheme.colorScheme.onPrimary
+            else
+                MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -78,7 +148,10 @@ fun AlbumCard(album: SpotifyAlbum) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(8.dp)
+            )
     ) {
         if (album.images.isNotEmpty()) {
             AsyncImage(
@@ -96,9 +169,79 @@ fun AlbumCard(album: SpotifyAlbum) {
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(8.dp)
         )
     }
+}
+
+@Composable
+fun TrackCard(track: SpotifyTrack) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Capa do álbum
+        if (track.album.images.isNotEmpty()) {
+            AsyncImage(
+                model = track.album.images[0].url,
+                contentDescription = track.name,
+                modifier = Modifier
+                    .size(60.dp),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        // Info da música
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = track.name,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = track.artists.joinToString(", ") { it.name },
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = "${track.album.name}",
+                fontSize = 11.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        // Tempo da música
+        Text(
+            text = formatMillisToMinutes(track.duration_ms),
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        )
+    }
+}
+
+fun formatMillisToMinutes(millis: Int): String {
+    val minutes = millis / 1000 / 60
+    val seconds = (millis / 1000) % 60
+    return String.format("%d:%02d", minutes, seconds)
 }
