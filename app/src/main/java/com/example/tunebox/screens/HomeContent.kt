@@ -1,6 +1,7 @@
 package com.example.tunebox.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -27,7 +28,8 @@ import kotlinx.coroutines.launch
 fun HomeContent(
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
-    accessToken: String
+    accessToken: String,
+    onAlbumClick: (title: String, artist: String, cover: String) -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(0) }
     var albums by remember { mutableStateOf<List<SpotifyAlbum>>(emptyList()) }
@@ -88,19 +90,28 @@ fun HomeContent(
         } else {
             when (selectedTab) {
                 0 -> {
-                    // Tab de Albums - Albums que você mais escuta
+
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(3),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(albums) { album ->
-                            AlbumCard(album)
+                            AlbumCard(
+                                album = album,
+                                onClick = {
+                                    val title = album.name
+                                    val artist = album.artists.firstOrNull()?.name ?: ""
+                                    val cover = album.images.firstOrNull()?.url ?: ""
+
+                                    onAlbumClick(title, artist, cover)
+                                }
+                            )
                         }
                     }
                 }
                 1 -> {
-                    // Tab de Musics - Tracks mais populares
+
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
@@ -144,7 +155,9 @@ fun TabButton(
 }
 
 @Composable
-fun AlbumCard(album: SpotifyAlbum) {
+fun AlbumCard(
+    album: SpotifyAlbum,
+    onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -152,6 +165,7 @@ fun AlbumCard(album: SpotifyAlbum) {
                 color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(8.dp)
             )
+            .clickable{ onClick()}
     ) {
         if (album.images.isNotEmpty()) {
             AsyncImage(
@@ -189,7 +203,7 @@ fun TrackCard(track: SpotifyTrack) {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Capa do álbum
+
         if (track.album.images.isNotEmpty()) {
             AsyncImage(
                 model = track.album.images[0].url,
@@ -200,7 +214,7 @@ fun TrackCard(track: SpotifyTrack) {
             )
         }
 
-        // Info da música
+
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -231,7 +245,7 @@ fun TrackCard(track: SpotifyTrack) {
             )
         }
 
-        // Tempo da música
+
         Text(
             text = formatMillisToMinutes(track.duration_ms),
             fontSize = 12.sp,

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,7 +29,7 @@ fun TuneBoxBottomNavigation(
         NavigationItem(Icons.Filled.Favorite, "Home", "home"),
         NavigationItem(Icons.Filled.Search, "Buscar", "search"),
         NavigationItem(Icons.Filled.Add, "Adicionar", "add"),
-        NavigationItem(Icons.Filled.Headphones, "Reproduzindo", "playing"),
+        NavigationItem(Icons.Outlined.ChatBubbleOutline, "Comentários", "playing"),
         NavigationItem(Icons.Filled.Person, "Perfil", "profile")
     )
 

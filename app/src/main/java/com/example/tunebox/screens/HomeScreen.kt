@@ -2,27 +2,19 @@ package com.example.tunebox.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.example.tunebox.components.TuneBoxBottomNavigation
-import com.example.tunebox.data.models.SpotifyAlbum
 import com.example.tunebox.data.repository.SpotifyRepository
 import com.example.tunebox.navigation.NavigationHost
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,6 +25,12 @@ fun HomeScreen(
     onLogout: () -> Unit
 ) {
     var currentRoute by remember { mutableStateOf("home") }
+
+    var selectedAlbumTitle by remember { mutableStateOf("Rodeo") }
+    var selectedArtistName by remember { mutableStateOf("Travis Scott") }
+    var selectedCoverUrl by remember { mutableStateOf("https://picsum.photos/400") }
+
+    val spotifyRepository = remember { SpotifyRepository() }
 
     Scaffold(
         topBar = {
@@ -85,7 +83,17 @@ fun HomeScreen(
                 isDarkTheme = isDarkTheme,
                 onToggleTheme = onToggleTheme,
                 accessToken = accessToken,
-                onLogout = onLogout
+                onLogout = onLogout,
+                spotifyRepository = spotifyRepository,
+                albumTitle = selectedAlbumTitle,
+                artistName = selectedArtistName,
+                coverUrl = selectedCoverUrl,
+                onAlbumClick = {title, artist, cover ->
+                    selectedAlbumTitle = title
+                    selectedArtistName = artist
+                    selectedCoverUrl = cover
+                    currentRoute = "comment"
+                }
             )
         }
     }

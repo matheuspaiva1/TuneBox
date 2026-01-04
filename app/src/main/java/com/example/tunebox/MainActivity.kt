@@ -18,6 +18,7 @@ import com.example.tunebox.data.repository.SpotifyAuthRepository
 import com.example.tunebox.screens.AuthScreen
 import com.example.tunebox.screens.HomeScreen
 import com.example.tunebox.screens.LoginWithSpotifyScreen
+import com.example.tunebox.screens.ProfileScreen
 import com.example.tunebox.ui.theme.TuneBoxTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             var isDarkTheme by rememberSaveable { mutableStateOf(false) }
-            var currentScreen by rememberSaveable { mutableStateOf("auth") } // "auth", "spotify_login", "home"
+            var currentScreen by rememberSaveable { mutableStateOf("auth") }
             var accessToken by rememberSaveable { mutableStateOf("") }
 
             TuneBoxTheme(darkTheme = isDarkTheme) {
@@ -60,6 +61,7 @@ class MainActivity : ComponentActivity() {
                                         println("SPOTIFY CODE: $code")
                                         val response = authRepository.exchangeCodeForToken(code)
                                         if (response != null) {
+                                            println("MAIN ACESS TOKEN: ${response.access_token}")
                                             tokenManager.saveTokens(
                                                 accessToken = response.access_token,
                                                 refreshToken = response.refresh_token
@@ -93,7 +95,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Detecta quando o Spotify redireciona de volta para o app
         handleSpotifyCallback(intent)
     }
 
@@ -107,8 +108,8 @@ class MainActivity : ComponentActivity() {
         if (data != null && data.scheme == "tunebox" && data.host == "callback") {
             val code = data.getQueryParameter("code")
             if (code != null) {
-                // O código já é processado na LoginWithSpotifyScreen
             }
         }
     }
 }
+

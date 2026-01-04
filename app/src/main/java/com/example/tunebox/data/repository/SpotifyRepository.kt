@@ -5,7 +5,8 @@ import com.example.tunebox.data.models.SpotifyAlbum
 import com.example.tunebox.data.models.SpotifyTrack
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
+import com.example.tunebox.data.models.SpotifyUser
+import com.example.tunebox.data.models.toDomain
 class SpotifyRepository {
 
     private val retrofit = Retrofit.Builder()
@@ -15,9 +16,26 @@ class SpotifyRepository {
 
     private val apiService = retrofit.create(SpotifyApiService::class.java)
 
+    suspend fun getCurrentUser(accessToken: String): SpotifyUser? {
+        return try {
+            println("SPOTIFY getCurrentUser() token = $accessToken")
+
+            val response = apiService.getCurrentUser(
+                authorization = "Bearer $accessToken"
+            )
+            println("SPOTIFY USER RESPONSE: $response")
+
+            response.toDomain()          // converte SpotifyUserResponse -> SpotifyUser
+        } catch (e: Exception) {
+            println("SPOTIFY USER ERROR: ${e.message}")
+            e.printStackTrace()
+            null
+        }
+    }
+
     suspend fun getTopTracks(accessToken: String): List<SpotifyTrack> {
         return try {
-            val response = apiService.getTopTracks(
+            val response = apiService.getTopTracksFull(
                 authorization = "Bearer $accessToken",
                 limit = 50
             )
@@ -30,11 +48,11 @@ class SpotifyRepository {
 
     suspend fun getMostListenedAlbums(accessToken: String): List<SpotifyAlbum> {
         return try {
-            val response = apiService.getTopTracks(
+            val response = apiService.getTopTracksFull(
                 authorization = "Bearer $accessToken",
                 limit = 50
             )
-            // Extrai os álbuns únicos das tracks mais ouvidas
+
             response.items
                 .map { it.album }
                 .distinctBy { it.id }
@@ -57,4 +75,29 @@ class SpotifyRepository {
             emptyList()
         }
     }
+
+    suspend fun getUserTopTracksShort(accessToken: String, limit: Int = 3) =
+        try {
+            val response = apiService.getTopTracksShort(
+                authorization = "Bearer $accessToken",
+                limit = limit,
+                timeRange = "short_term"
+            )
+            response.items
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+
+    suspend fun getUserPlaylistsShort(accessToken: String, limit: Int = 3) =
+        try {
+            val response = apiService.getUserPlaylistsShort(
+                authorization = "Bearer $accessToken",
+                limit = limit
+            )
+            response.items
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
 }

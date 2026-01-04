@@ -1,7 +1,11 @@
 package com.example.tunebox.navigation
 
+import android.icu.text.CaseMap
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import com.example.tunebox.data.repository.SpotifyRepository
 import com.example.tunebox.screens.*
+import retrofit2.http.Url
 
 @Composable
 fun NavigationHost(
@@ -9,42 +13,51 @@ fun NavigationHost(
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
     accessToken: String,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    spotifyRepository: SpotifyRepository,
+    albumTitle: String,
+    artistName: String,
+    coverUrl: String,
+    onAlbumClick: (String, String, String) -> Unit
 ) {
     when (currentRoute) {
+
         "home" -> HomeContent(
             isDarkTheme = isDarkTheme,
             onToggleTheme = onToggleTheme,
-            accessToken = accessToken
+            accessToken = accessToken,
+            onAlbumClick = onAlbumClick
         )
 
-        /**
-        "search" -> SearchScreen(
-            isDarkTheme = isDarkTheme,
-            onToggleTheme = onToggleTheme,
-            accessToken = accessToken
-        )
+        "profile" -> {
+            val profileViewModel = remember {
+                ProfileViewModel(
+                    repository = spotifyRepository,
+                    accessToken = accessToken
+                )
+            }
 
-        "add" -> AddScreen(
-            isDarkTheme = isDarkTheme,
-            onToggleTheme = onToggleTheme
+            ProfileScreen(
+                onBack = onLogout,
+                viewModel = profileViewModel,
+                onAlbumClick = onAlbumClick
+            )
+        }
+        "comment" -> CommentScreen(
+            albumTitle = albumTitle,
+            artistName = artistName,
+            coverUrl = coverUrl,
+            onBack = onLogout,
+            onSave = { comment, rating ->
+                println("COMMENT: $comment | rating: $rating")
+            }
         )
-
-        "playing" -> NowPlayingScreen(
-            isDarkTheme = isDarkTheme,
-            onToggleTheme = onToggleTheme
-        )
-
-        "profile" -> ProfileScreen(
-            isDarkTheme = isDarkTheme,
-            onToggleTheme = onToggleTheme,
-            onLogout = onLogout
-        ) **/
 
         else -> HomeContent(
             isDarkTheme = isDarkTheme,
             onToggleTheme = onToggleTheme,
-            accessToken = accessToken
+            accessToken = accessToken,
+            onAlbumClick = onAlbumClick
         )
     }
 }
