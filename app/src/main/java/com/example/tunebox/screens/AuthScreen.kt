@@ -86,7 +86,7 @@ fun AuthScreen(
                 textAlign = TextAlign.Center
             )
 
-            // Botão de Login com Spotify
+
             Button(
                 onClick = onLoginWithSpotify,
                 modifier = Modifier
@@ -107,7 +107,7 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Texto "Não tenho uma conta?" com link para cadastro
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
