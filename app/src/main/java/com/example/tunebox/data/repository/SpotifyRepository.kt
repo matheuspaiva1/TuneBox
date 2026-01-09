@@ -100,4 +100,24 @@ class SpotifyRepository {
             e.printStackTrace()
             emptyList()
         }
+
+    suspend fun search(accessToken: String, query: String): List<Any> {
+        if (query.isBlank()) {
+            return emptyList()
+        }
+        return try {
+            val response = apiService.search(
+                authorization = "Bearer $accessToken",
+                query = query
+            )
+            // Combina os resultados de músicas e álbuns em uma única lista
+            val results = mutableListOf<Any>()
+            results.addAll(response.tracks.items)
+            results.addAll(response.albums.items)
+            results
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
 }

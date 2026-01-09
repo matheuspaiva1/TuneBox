@@ -46,4 +46,12 @@ interface SpotifyApiService {
         @Header("Authorization") authorization: String,
         @Query("limit") limit: Int = 3
     ): PlaylistsResponse
+
+    @GET("v1/search")
+    suspend fun search(
+        @Header("Authorization") authorization: String,
+        @Query("q") query: String,
+        @Query("type") type: String = "track,album",
+        @Query("limit") limit: Int = 20
+    ): SearchResponse
 }

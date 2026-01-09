@@ -1,11 +1,11 @@
 package com.example.tunebox.navigation
 
-import android.icu.text.CaseMap
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.example.tunebox.data.repository.SpotifyRepository
 import com.example.tunebox.screens.*
-import retrofit2.http.Url
 
 @Composable
 fun NavigationHost(
@@ -28,6 +28,30 @@ fun NavigationHost(
             accessToken = accessToken,
             onAlbumClick = onAlbumClick
         )
+
+        "search" -> {
+            val searchViewModel = remember {
+                SearchViewModel(
+                    repository = spotifyRepository,
+                    accessToken = accessToken
+                )
+            }
+            val results by searchViewModel.results.collectAsState()
+
+            SearchScreen(
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = onToggleTheme,
+                results = results,
+                onQueryChange = { searchViewModel.onQueryChange(it) },
+                onResultClick = { result ->
+                    onAlbumClick(result.title, result.subtitle, result.imageUrl)
+                },
+                onFavoriteClick = { /* favoritar */ },
+                onCommentClick = { result ->
+                    onAlbumClick(result.title, result.subtitle, result.imageUrl)
+                }
+            )
+        }
 
         "profile" -> {
             val profileViewModel = remember {
