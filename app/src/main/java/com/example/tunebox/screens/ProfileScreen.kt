@@ -1,6 +1,5 @@
 package com.example.tunebox.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,6 +34,9 @@ fun ProfileScreen(
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showMenu by remember { mutableStateOf(false) }
+
+    var showEditNameDialog by remember { mutableStateOf(false) }
+    var editedName by remember { mutableStateOf(state.user?.displayName ?: "") }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -63,17 +64,13 @@ fun ProfileScreen(
                     top = innerPadding.calculateTopPadding(),
                     bottom = 4.dp
                 )
-        )
-
-        {
-
-
+        ) {
 
             OutlinedCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 260.dp)
-                    .offset(y = (-70.dp)),
+                    .offset(y = (-70).dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.outlinedCardColors(
                     containerColor = MaterialTheme.colorScheme.surface
@@ -102,7 +99,11 @@ fun ProfileScreen(
                         ) {
                             DropdownMenuItem(
                                 text = { Text("Edit name") },
-                                onClick = { showMenu = false }
+                                onClick = {
+                                    showMenu = false
+                                    editedName = state.user?.displayName ?: ""
+                                    showEditNameDialog = true
+                                }
                             )
                             DropdownMenuItem(
                                 text = { Text("Quit", color = Color.Red) },
@@ -138,7 +139,7 @@ fun ProfileScreen(
                         Spacer(Modifier.height(8.dp))
 
                         Text(
-                            text = state.user?.displayName ?: "User",
+                            text = state.user?.customName ?: state.user?.displayName ?: "User",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -148,7 +149,7 @@ fun ProfileScreen(
             }
 
             Text(
-                text = "My Favorites",
+                text = "Meus favoritos",
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.offset(y = (-4).dp),
                 color = MaterialTheme.colorScheme.onBackground
@@ -177,15 +178,45 @@ fun ProfileScreen(
             Spacer(Modifier.height(6.dp))
 
             Text(
-                text = "Most Comments",
+                text = "Mais comentados",
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(Modifier.height(8.dp))
+
             AlbumRow(
-                urls = state.userPlaylists
-                    .map { it.images.firstOrNull()?.url ?: "" }
+                urls = state.mostCommentedAlbums
+                    .map { it.coverUrl }
                     .filter { it.isNotEmpty() }
+            )
+        }
+
+        if (showEditNameDialog) {
+            AlertDialog(
+                onDismissRequest = { showEditNameDialog = false },
+                title = { Text("Editar nome") },
+                text = {
+                    TextField(
+                        value = editedName,
+                        onValueChange = { editedName = it },
+                        singleLine = true
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.updateDisplayName(editedName)
+                            showEditNameDialog = false
+                        }
+                    ) {
+                        Text("Salvar")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showEditNameDialog = false }) {
+                        Text("Cancelar")
+                    }
+                }
             )
         }
     }

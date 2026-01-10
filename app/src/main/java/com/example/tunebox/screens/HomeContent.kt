@@ -53,7 +53,6 @@ fun HomeContent(
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
-        // Abas
         Row(
             modifier = Modifier
                 .fillMaxWidth()
