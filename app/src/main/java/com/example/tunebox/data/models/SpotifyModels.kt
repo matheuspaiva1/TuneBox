@@ -58,7 +58,8 @@ data class SpotifyUserResponse(
 data class SpotifyUser(
     val id: String,
     val displayName: String,
-    val imageUrl: String?
+    val imageUrl: String?,
+    val customName: String? = null
 )
 fun SpotifyUserResponse.toDomain(): SpotifyUser =
     SpotifyUser(

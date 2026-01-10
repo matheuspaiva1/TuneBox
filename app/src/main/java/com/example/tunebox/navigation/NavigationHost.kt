@@ -3,6 +3,8 @@ package com.example.tunebox.navigation
 import android.icu.text.CaseMap
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.example.tunebox.data.models.UserComment
+import com.example.tunebox.data.repository.CommentRepository
 import com.example.tunebox.data.repository.SpotifyRepository
 import com.example.tunebox.screens.*
 import retrofit2.http.Url
@@ -18,7 +20,12 @@ fun NavigationHost(
     albumTitle: String,
     artistName: String,
     coverUrl: String,
-    onAlbumClick: (String, String, String) -> Unit
+    onAlbumClick: (String, String, String) -> Unit,
+    currentUserId: String,
+    comments: List<UserComment>,
+    onAddComment: (UserComment) -> Unit,
+    commentRepository: CommentRepository,
+    profileViewModel: ProfileViewModel
 ) {
     when (currentRoute) {
 
@@ -30,29 +37,37 @@ fun NavigationHost(
         )
 
         "profile" -> {
-            val profileViewModel = remember {
-                ProfileViewModel(
-                    repository = spotifyRepository,
-                    accessToken = accessToken
-                )
-            }
-
             ProfileScreen(
                 onBack = onLogout,
                 viewModel = profileViewModel,
                 onAlbumClick = onAlbumClick
             )
         }
+
+        "comments" -> CommentListScreen(
+            comments = comments,
+
+        )
+
+
         "comment" -> CommentScreen(
             albumTitle = albumTitle,
             artistName = artistName,
             coverUrl = coverUrl,
             onBack = onLogout,
-            onSave = { comment, rating ->
-                println("COMMENT: $comment | rating: $rating")
+            onSave = { text, rating ->
+                val comment = UserComment(
+                    id = System.currentTimeMillis(),
+                    userId = currentUserId,
+                    albumTitle = albumTitle,
+                    artistName = artistName,
+                    coverUrl = coverUrl,
+                    text = text,
+                    rating = rating
+                )
+                onAddComment(comment)
             }
         )
-
         else -> HomeContent(
             isDarkTheme = isDarkTheme,
             onToggleTheme = onToggleTheme,

@@ -29,7 +29,7 @@ fun TuneBoxBottomNavigation(
         NavigationItem(Icons.Filled.Favorite, "Home", "home"),
         NavigationItem(Icons.Filled.Search, "Buscar", "search"),
         NavigationItem(Icons.Filled.Add, "Adicionar", "add"),
-        NavigationItem(Icons.Outlined.ChatBubbleOutline, "Comentários", "playing"),
+        NavigationItem(Icons.Outlined.ChatBubbleOutline, "Comentários", "comments"),
         NavigationItem(Icons.Filled.Person, "Perfil", "profile")
     )
 

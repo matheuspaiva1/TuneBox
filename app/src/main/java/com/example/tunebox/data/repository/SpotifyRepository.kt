@@ -25,7 +25,7 @@ class SpotifyRepository {
             )
             println("SPOTIFY USER RESPONSE: $response")
 
-            response.toDomain()          // converte SpotifyUserResponse -> SpotifyUser
+            response.toDomain()
         } catch (e: Exception) {
             println("SPOTIFY USER ERROR: ${e.message}")
             e.printStackTrace()
