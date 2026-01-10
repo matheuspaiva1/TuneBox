@@ -127,15 +127,6 @@ fun CommentHeaderCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                AsyncImage(
-                    model = if (artistImageUrl.isNotBlank()) artistImageUrl else coverUrl,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-
                 Text(
                     text = artistName,
                     fontWeight = FontWeight.Medium,
