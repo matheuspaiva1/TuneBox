@@ -29,7 +29,7 @@ fun HomeContent(
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
     accessToken: String,
-    onAlbumClick: (title: String, artist: String, cover: String) -> Unit
+    onAlbumClick: (title: String, artist: String, cover: String, artistImageUrl: String) -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(0) }
     var albums by remember { mutableStateOf<List<SpotifyAlbum>>(emptyList()) }
@@ -103,8 +103,9 @@ fun HomeContent(
                                     val title = album.name
                                     val artist = album.artists.firstOrNull()?.name ?: ""
                                     val cover = album.images.firstOrNull()?.url ?: ""
+                                    val artistImage = album.artists.firstOrNull()?.images?.firstOrNull()?.url ?: ""
 
-                                    onAlbumClick(title, artist, cover)
+                                    onAlbumClick(title, artist, cover, artistImage)
                                 }
                             )
                         }

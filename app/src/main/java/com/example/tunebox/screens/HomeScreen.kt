@@ -29,6 +29,7 @@ fun HomeScreen(
     var selectedAlbumTitle by remember { mutableStateOf("Rodeo") }
     var selectedArtistName by remember { mutableStateOf("Travis Scott") }
     var selectedCoverUrl by remember { mutableStateOf("https://picsum.photos/400") }
+    var selectedArtistImageUrl by remember { mutableStateOf("") }
 
     val spotifyRepository = remember { SpotifyRepository() }
 
@@ -88,10 +89,12 @@ fun HomeScreen(
                 albumTitle = selectedAlbumTitle,
                 artistName = selectedArtistName,
                 coverUrl = selectedCoverUrl,
-                onAlbumClick = {title, artist, cover ->
+                artistImageUrl = selectedArtistImageUrl,
+                onAlbumClick = { title, artist, cover, artistImage ->
                     selectedAlbumTitle = title
                     selectedArtistName = artist
                     selectedCoverUrl = cover
+                    selectedArtistImageUrl = artistImage
                     currentRoute = "comment"
                 }
             )

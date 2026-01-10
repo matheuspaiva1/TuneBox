@@ -31,7 +31,7 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
     viewModel: ProfileViewModel,
-    onAlbumClick: (String, String, String) -> Unit
+    onAlbumClick: (String, String, String, String) -> Unit
 ) {
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -167,6 +167,7 @@ fun ProfileScreen(
                             onAlbumClick(
                                 trackItem.name,
                                 "",
+                                trackItem.album.images.firstOrNull()?.url ?: "",
                                 trackItem.album.images.firstOrNull()?.url ?: ""
                             )
                         }

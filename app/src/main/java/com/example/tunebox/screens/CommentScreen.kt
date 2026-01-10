@@ -27,6 +27,7 @@ fun CommentScreen(
     albumTitle: String,
     artistName: String,
     coverUrl: String,
+    artistImageUrl: String,
     onBack: () -> Unit,
     onSave: (String, Int) -> Unit
 ) {
@@ -53,6 +54,7 @@ fun CommentScreen(
                 albumTitle = albumTitle,
                 artistName = artistName,
                 coverUrl = coverUrl,
+                artistImageUrl = artistImageUrl,
                 rating = rating,
                 onRatingChange = { rating = it }
             )
@@ -86,6 +88,7 @@ fun CommentHeaderCard(
     albumTitle: String,
     artistName: String,
     coverUrl: String,
+    artistImageUrl: String,
     rating: Int,
     onRatingChange: (Int) -> Unit
 ) {
@@ -125,7 +128,7 @@ fun CommentHeaderCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 AsyncImage(
-                    model = coverUrl,
+                    model = if (artistImageUrl.isNotBlank()) artistImageUrl else coverUrl,
                     contentDescription = null,
                     modifier = Modifier
                         .size(40.dp)

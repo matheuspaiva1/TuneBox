@@ -7,9 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,7 +22,8 @@ data class SearchResultUi(
     val id: String,
     val title: String,      // nome da música/álbum
     val subtitle: String,   // artista
-    val imageUrl: String
+    val imageUrl: String,
+    val artistImageUrl: String // imagem do artista (nova)
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,12 +42,14 @@ fun SearchScreen(
     Scaffold(
 
     ) { paddingValues ->
+        // Ajuste: aproximar mais a barra do TopAppBar (reduzir o espaço entre título e barra)
+        val topPadding = maxOf(paddingValues.calculateTopPadding() - 28.dp, 0.dp)
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(paddingValues)
-                .padding(16.dp)
+                .padding(top = topPadding, start = 16.dp, end = 16.dp, bottom = paddingValues.calculateBottomPadding())
         ) {
             // Barra de busca
             OutlinedTextField(
@@ -74,7 +75,7 @@ fun SearchScreen(
                 shape = MaterialTheme.shapes.medium
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             // Lista de resultados
             LazyColumn(
@@ -144,32 +145,20 @@ fun SearchResultCard(
                 )
             }
 
+            // Right-side: apenas o ícone de coração, posicionado no canto superior direito do card
             Column(
                 horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.height(70.dp)
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier
+                    .height(70.dp)
+                    .padding(top = 4.dp, end = 4.dp)
             ) {
-                IconButton(onClick = { /* menu de opções futuro */ }) {
+                IconButton(onClick = onFavoriteClick) {
                     Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "Mais opções"
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = "Favoritar",
+                        tint = MaterialTheme.colorScheme.primary
                     )
-                }
-                Row {
-                    IconButton(onClick = onFavoriteClick) {
-                        Icon(
-                            imageVector = Icons.Default.FavoriteBorder,
-                            contentDescription = "Favoritar",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(onClick = onCommentClick) {
-                        Icon(
-                            imageVector = Icons.Default.Search, // trocar depois por ícone de comentário/fone
-                            contentDescription = "Comentários",
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
-                    }
                 }
             }
         }

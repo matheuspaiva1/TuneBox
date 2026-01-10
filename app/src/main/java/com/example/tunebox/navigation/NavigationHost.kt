@@ -18,7 +18,8 @@ fun NavigationHost(
     albumTitle: String,
     artistName: String,
     coverUrl: String,
-    onAlbumClick: (String, String, String) -> Unit
+    artistImageUrl: String,
+    onAlbumClick: (String, String, String, String) -> Unit
 ) {
     when (currentRoute) {
 
@@ -44,11 +45,11 @@ fun NavigationHost(
                 results = results,
                 onQueryChange = { searchViewModel.onQueryChange(it) },
                 onResultClick = { result ->
-                    onAlbumClick(result.title, result.subtitle, result.imageUrl)
+                    onAlbumClick(result.title, result.subtitle, result.imageUrl, result.artistImageUrl)
                 },
                 onFavoriteClick = { /* favoritar */ },
                 onCommentClick = { result ->
-                    onAlbumClick(result.title, result.subtitle, result.imageUrl)
+                    onAlbumClick(result.title, result.subtitle, result.imageUrl, result.artistImageUrl)
                 }
             )
         }
@@ -71,6 +72,7 @@ fun NavigationHost(
             albumTitle = albumTitle,
             artistName = artistName,
             coverUrl = coverUrl,
+            artistImageUrl = artistImageUrl,
             onBack = onLogout,
             onSave = { comment, rating ->
                 println("COMMENT: $comment | rating: $rating")
