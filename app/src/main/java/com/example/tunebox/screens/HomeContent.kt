@@ -115,7 +115,15 @@ fun HomeContent(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(tracks) { track ->
-                            TrackCard(track)
+                            TrackCard(track,
+                                onClick = {
+                                    val title = track.name
+                                    val artist = track.artists.firstOrNull()?.name ?: ""
+                                    val cover = track.album.images.firstOrNull()?.url ?: ""
+
+                                    onAlbumClick(title, artist, cover)
+                                }
+                            )
                         }
                     }
                 }
@@ -190,7 +198,10 @@ fun AlbumCard(
 }
 
 @Composable
-fun TrackCard(track: SpotifyTrack) {
+fun TrackCard(
+    track: SpotifyTrack,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -198,21 +209,19 @@ fun TrackCard(track: SpotifyTrack) {
                 color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(8.dp)
             )
+            .clickable { onClick() }      // <- clique
             .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         if (track.album.images.isNotEmpty()) {
             AsyncImage(
                 model = track.album.images[0].url,
                 contentDescription = track.name,
-                modifier = Modifier
-                    .size(60.dp),
+                modifier = Modifier.size(60.dp),
                 contentScale = ContentScale.Crop
             )
         }
-
 
         Column(
             modifier = Modifier.weight(1f),
@@ -236,14 +245,13 @@ fun TrackCard(track: SpotifyTrack) {
             )
 
             Text(
-                text = "${track.album.name}",
+                text = track.album.name,
                 fontSize = 11.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
-
 
         Text(
             text = formatMillisToMinutes(track.duration_ms),

@@ -4,13 +4,22 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
+import androidx.room.Delete
 import com.example.tunebox.data.models.UserComment
 import kotlinx.coroutines.flow.Flow
+
 @Dao
 interface CommentDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertComment(comment: UserComment)
+
+    @Update
+    suspend fun updateComment(comment: UserComment)
+
+    @Delete
+    suspend fun deleteComment(comment: UserComment)
 
     @Query("SELECT * FROM user_comments WHERE userId = :userId ORDER BY id DESC")
     fun getCommentsForUser(userId: String): Flow<List<UserComment>>
