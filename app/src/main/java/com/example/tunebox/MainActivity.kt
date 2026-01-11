@@ -15,6 +15,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.tunebox.data.manager.TokenManager
 import com.example.tunebox.data.repository.SpotifyAuthRepository
+import com.example.tunebox.notifications.NotificationManager
+import com.example.tunebox.notifications.NotificationScheduler
 import com.example.tunebox.screens.AuthScreen
 import com.example.tunebox.screens.HomeScreen
 import com.example.tunebox.screens.LoginWithSpotifyScreen
@@ -27,10 +29,16 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
     private lateinit var tokenManager: TokenManager
+    private lateinit var notificationManager: NotificationManager
+    private lateinit var notificationScheduler: NotificationScheduler
+
     private val authRepository = SpotifyAuthRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        notificationManager = NotificationManager(this)
+        notificationScheduler = NotificationScheduler(this)
+
         tokenManager = TokenManager(this)
 
         setContent {
@@ -68,9 +76,23 @@ class MainActivity : ComponentActivity() {
                                             )
                                             accessToken = response.access_token
                                             currentScreen = "home"
+
+                                            notificationScheduler.scheduleDailyReminder(
+                                                title = "Hora de ouvir música",
+                                                message = "Ouça suas músicas favoritas",
+                                                hourOfDay = 8
+                                            )
+
+                                            notificationManager.showLocalNotification(
+                                                "Bem-vindo!",
+                                                "Seu login foi bem-sucedido"
+                                            )
+
                                         } else {
                                             currentScreen = "auth"
                                         }
+
+
                                     }
                                 }
                             )
@@ -81,9 +103,11 @@ class MainActivity : ComponentActivity() {
                                 isDarkTheme = isDarkTheme,
                                 onToggleTheme = { isDarkTheme = !isDarkTheme },
                                 accessToken = accessToken,
+                                notificationManager = notificationManager,
                                 onLogout = {
                                     CoroutineScope(Dispatchers.Main).launch {
                                         tokenManager.clearTokens()
+                                        notificationScheduler.cancelAllReminders()
                                         accessToken = ""
                                         currentScreen = "auth"
                                     }

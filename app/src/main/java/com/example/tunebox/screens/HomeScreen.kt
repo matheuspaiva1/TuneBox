@@ -21,6 +21,7 @@ import com.example.tunebox.data.models.UserComment
 import com.example.tunebox.data.repository.CommentRepository
 import com.example.tunebox.data.repository.SpotifyRepository
 import com.example.tunebox.navigation.NavigationHost
+import com.example.tunebox.notifications.NotificationManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,7 +30,8 @@ fun HomeScreen(
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
     accessToken: String,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    notificationManager: NotificationManager
 ) {
     var currentRoute by remember { mutableStateOf("home") }
 
@@ -158,7 +160,8 @@ fun HomeScreen(
                 },
                 commentRepository = commentRepository,
                 profileViewModel = profileViewModel,
-                appDatabase = appDatabase
+                appDatabase = appDatabase,
+                notificationManager = notificationManager
             )
         }
     }

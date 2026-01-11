@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.tunebox.notifications.NotificationManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +31,8 @@ fun CommentScreen(
     onBack: () -> Unit,
     onSave: (String, Int) -> Unit,
     existingRating: Int? = null,
-    existingComment: String? = null
+    existingComment: String? = null,
+    notificationManager: NotificationManager? = null
 ) {
     var rating by remember { mutableStateOf(existingRating ?: 0) }
     var comment by remember { mutableStateOf(existingComment ?: "") }
@@ -67,7 +69,10 @@ fun CommentScreen(
             Button(
                 onClick = {
                     onSave(comment, rating)
-
+                    notificationManager?.showLocalNotification(
+                        "Novo Comentário",
+                        "Você avaliou o álbum $albumTitle com $rating estrelas."
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()

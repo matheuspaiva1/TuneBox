@@ -14,12 +14,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.tunebox.data.repository.LikesViewModel
+import com.example.tunebox.notifications.NotificationManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LikesScreen(
     viewModel: LikesViewModel,
-    onItemClick: (String, String, String) -> Unit
+    onItemClick: (String, String, String) -> Unit,
+    notificationManager: NotificationManager // 1. Adicionado o parâmetro
 ) {
     val likes = viewModel.likesForUser().collectAsState(initial = emptyList())
 
@@ -102,6 +104,10 @@ fun LikesScreen(
                                             item.subtitle,
                                             item.imageUrl,
                                             item.type
+                                        )
+                                        notificationManager.showLocalNotification(
+                                            title = "Favoritos Atualizados",
+                                            message = "Você removeu '${item.title}' da sua lista."
                                         )
                                     }
                                 ) {
