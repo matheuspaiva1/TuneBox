@@ -3,6 +3,7 @@ package com.example.tunebox.data.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.tunebox.data.models.UserComment
+import com.example.tunebox.data.models.LikedItem
 
 @Database(
     entities = [UserComment::class, LikedItem::class],

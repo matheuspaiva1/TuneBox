@@ -67,7 +67,7 @@ fun CommentScreen(
             Button(
                 onClick = {
                     onSave(comment, rating)
-                    onBack()
+
                 },
                 modifier = Modifier
                     .fillMaxWidth()
