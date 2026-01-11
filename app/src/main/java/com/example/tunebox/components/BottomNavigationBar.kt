@@ -26,9 +26,9 @@ fun TuneBoxBottomNavigation(
     onNavigate: (String) -> Unit
 ) {
     val items = listOf(
-        NavigationItem(Icons.Filled.Favorite, "Home", "home"),
+        NavigationItem(Icons.Filled.Home, "Home", "home"),
         NavigationItem(Icons.Filled.Search, "Buscar", "search"),
-        NavigationItem(Icons.Filled.Add, "Adicionar", "add"),
+        NavigationItem(Icons.Filled.Favorite, "Adicionar", "add"),
         NavigationItem(Icons.Outlined.ChatBubbleOutline, "Comentários", "comments"),
         NavigationItem(Icons.Filled.Person, "Perfil", "profile")
     )
