@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.example.tunebox.data.models.UserComment
 import com.example.tunebox.data.repository.CommentRepository
+import com.example.tunebox.data.repository.CommentViewModel
 import com.example.tunebox.data.repository.SpotifyRepository
 import com.example.tunebox.screens.*
 import retrofit2.http.Url
@@ -48,6 +49,7 @@ fun NavigationHost(
 
         "comments" -> CommentListScreen(
             comments = comments,
+            viewModel = CommentViewModel(commentRepository)
         )
 
         "search" -> {
@@ -93,6 +95,7 @@ fun NavigationHost(
                 onAddComment(comment)
             }
         )
+
         else -> HomeContent(
             isDarkTheme = isDarkTheme,
             onToggleTheme = onToggleTheme,

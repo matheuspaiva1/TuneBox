@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -22,6 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.example.tunebox.data.db.AlbumCommentCount
+import com.example.tunebox.data.models.UserComment
+import java.net.URL
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +39,7 @@ fun ProfileScreen(
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showMenu by remember { mutableStateOf(false) }
-
+    val scrollState = rememberScrollState()
     var showEditNameDialog by remember { mutableStateOf(false) }
     var editedName by remember { mutableStateOf(state.user?.displayName ?: "") }
 
@@ -58,11 +63,12 @@ fun ProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(scrollState)
                 .padding(
                     start = 16.dp,
                     end = 16.dp,
                     top = innerPadding.calculateTopPadding(),
-                    bottom = 4.dp
+                    bottom = 24.dp
                 )
         ) {
 
@@ -136,7 +142,6 @@ fun ProfileScreen(
                             )
                         }
 
-                        Spacer(Modifier.height(8.dp))
 
                         Text(
                             text = state.user?.customName ?: state.user?.displayName ?: "User",
@@ -147,6 +152,7 @@ fun ProfileScreen(
                     }
                 }
             }
+            Spacer(Modifier.height((-60).dp))
 
             Text(
                 text = "Meus favoritos",
@@ -175,19 +181,24 @@ fun ProfileScreen(
                 }
             }
 
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Mais comentados",
+                text = "Meus comentários",
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(32.dp))
 
             AlbumRow(
-                urls = state.mostCommentedAlbums
-                    .map { it.coverUrl }
-                    .filter { it.isNotEmpty() }
+                albums = state.mostCommentedAlbums,
+                onAlbumClick = { album ->
+                    onAlbumClick(
+                        album.albumTitle,
+                        "", // ID do artista (pode ser vazio como no favoritos)
+                        album.coverUrl
+                    )
+                }
             )
         }
 
@@ -223,27 +234,47 @@ fun ProfileScreen(
 }
 
 @Composable
-fun AlbumRow(urls: List<String>) {
+fun AlbumRow(
+    albums: List<AlbumCommentCount>,
+    onAlbumClick: (AlbumCommentCount) -> Unit
+) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.fillMaxWidth()
     ) {
-        items(urls) { url ->
-            Card(
+        items(albums) { album ->
+            Column(
                 modifier = Modifier
-                    .width(110.dp)
-                    .height(140.dp),
-                shape = RoundedCornerShape(14.dp),
-                elevation = CardDefaults.cardElevation(2.dp)
+                    .width(120.dp)
+                    .clickable { onAlbumClick(album) }
             ) {
-                AsyncImage(
-                    model = url,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                    shape = RoundedCornerShape(14.dp),
+                    elevation = CardDefaults.cardElevation(2.dp)
+                ) {
+                    AsyncImage(
+                        model = album.coverUrl,
+                        contentDescription = album.albumTitle,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+
+                Text(
+                    text = album.albumTitle,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
         }
     }
 }
+
 
 @Composable
 fun FavoriteCard(

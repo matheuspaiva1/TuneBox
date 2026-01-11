@@ -28,13 +28,15 @@ fun CommentScreen(
     artistName: String,
     coverUrl: String,
     onBack: () -> Unit,
-    onSave: (String, Int) -> Unit
+    onSave: (String, Int) -> Unit,
+    existingRating: Int? = null,
+    existingComment: String? = null
 ) {
-    var rating by remember { mutableStateOf(0) }      // 0..5 estrelas
-    var comment by remember { mutableStateOf("") }
+    var rating by remember { mutableStateOf(existingRating ?: 0) }
+    var comment by remember { mutableStateOf(existingComment ?: "") }
 
     Scaffold(
-        topBar = { },
+        topBar = { /* se quiser, botão de voltar aqui */ }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -63,7 +65,10 @@ fun CommentScreen(
             )
 
             Button(
-                onClick = { onSave(comment, rating) },
+                onClick = {
+                    onSave(comment, rating)
+                    onBack()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -80,6 +85,7 @@ fun CommentScreen(
         }
     }
 }
+
 
 @Composable
 fun CommentHeaderCard(
