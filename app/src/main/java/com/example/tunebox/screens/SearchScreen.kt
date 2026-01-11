@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.tunebox.notifications.NotificationManager
 
 data class SearchResultUi(
     val id: String,
@@ -38,7 +39,8 @@ fun SearchScreen(
     onResultClick: (SearchResultUi) -> Unit = {},
     onFavoriteClick: (SearchResultUi) -> Unit = {},
     onCommentClick: (SearchResultUi) -> Unit = {},
-    favoriteIds: Set<String> = emptySet()
+    favoriteIds: Set<String> = emptySet(),
+    notificationManager: NotificationManager
 ) {
     var query by remember { mutableStateOf("") }
 
@@ -86,9 +88,20 @@ fun SearchScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(results) { item ->
+                    val isFavorite = favoriteIds.contains(item.id)
+
                     SearchResultCard(
                         result = item,
-                        onClick = { onResultClick(item) },
+                        onClick = {
+                            onResultClick(item)
+                            val title = if (isFavorite) "Removido" else "Adicionado"
+                            val message = if (isFavorite)
+                                "'${item.title}' saiu dos seus favoritos."
+                            else
+                                "'${item.title}' foi adicionado aos seus favoritos!"
+
+                            notificationManager.showLocalNotification(title, message)
+                        },
                         onFavoriteClick = { onFavoriteClick(item) },
                         onCommentClick = { onCommentClick(item) },
                         isFavorite = favoriteIds.contains(item.id),

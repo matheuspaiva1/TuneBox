@@ -23,11 +23,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.tunebox.data.models.UserComment
 import com.example.tunebox.data.repository.CommentViewModel
+import com.example.tunebox.notifications.NotificationManager
 
 @Composable
 fun CommentListScreen(
     comments: List<UserComment>,
     viewModel: CommentViewModel, // Recebe a ViewModel
+    notificationManager: NotificationManager // Adicione este parâmetro
     ) {
     var editingComment by remember { mutableStateOf<UserComment?>(null) }
 
@@ -64,7 +66,8 @@ fun CommentListScreen(
                         onEdit = {
                             editingComment = comment
                         },
-                        onDelete = { viewModel.deleteComment(comment) }
+                        onDelete = { viewModel.deleteComment(comment) },
+                        notificationManager = notificationManager
                     )
                 }
             }
@@ -79,6 +82,10 @@ fun CommentListScreen(
             onConfirm = { updatedComment ->
                 viewModel.updateComment(updatedComment)
                 editingComment = null
+                notificationManager.showLocalNotification(
+                    "Comentário Atualizado",
+                    "Suas alterações no álbum ${updatedComment.albumTitle} foram salvas."
+                )
             }
         )
     }
@@ -150,7 +157,9 @@ fun EditCommentDialog(
 fun CommentListItem(
     comment: UserComment,
     onEdit: () -> Unit = {},
-    onDelete: () -> Unit = {}
+    onDelete: () -> Unit = {},
+    notificationManager: NotificationManager // Adicione este parâmetro
+
 ) {
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
@@ -257,6 +266,10 @@ fun CommentListItem(
                     onClick = {
                         onDelete()
                         showDeleteConfirmation = false
+                        notificationManager.showLocalNotification(
+                            "Comentário Removido",
+                            "O comentário do álbum ${comment.albumTitle} foi excluído."
+                        )
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) {

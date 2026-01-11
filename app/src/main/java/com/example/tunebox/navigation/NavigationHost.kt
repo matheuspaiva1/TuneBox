@@ -13,6 +13,7 @@ import com.example.tunebox.screens.*
 import com.example.tunebox.data.repository.LikeRepository
 import com.example.tunebox.data.repository.LikesViewModel
 import com.example.tunebox.data.db.AppDatabase
+import com.example.tunebox.notifications.NotificationManager
 import retrofit2.http.Url
 
 @Composable
@@ -32,7 +33,8 @@ fun NavigationHost(
     onAddComment: (UserComment) -> Unit,
     commentRepository: CommentRepository,
     profileViewModel: ProfileViewModel,
-    appDatabase: AppDatabase
+    appDatabase: AppDatabase,
+    notificationManager: NotificationManager
 ) {
     val likeRepository = remember { LikeRepository(appDatabase.likesDao()) }
     val likesViewModel = remember(currentUserId) { LikesViewModel(likeRepository, currentUserId) }
@@ -56,7 +58,8 @@ fun NavigationHost(
 
         "comments" -> CommentListScreen(
             comments = comments,
-            viewModel = CommentViewModel(commentRepository)
+            viewModel = CommentViewModel(commentRepository),
+            notificationManager = notificationManager // Passe a instância aqui
         )
 
         "search" -> {
@@ -82,7 +85,8 @@ fun NavigationHost(
                 onCommentClick = { result ->
                     onAlbumClick(result.title, result.subtitle, result.imageUrl)
                 },
-                favoriteIds = favoriteIds
+                favoriteIds = favoriteIds,
+                notificationManager = notificationManager
             )
         }
 
@@ -91,7 +95,8 @@ fun NavigationHost(
                 viewModel = likesViewModel,
                 onItemClick = { title, artist, cover ->
                     onAlbumClick(title, artist, cover)
-                }
+                },
+                notificationManager = notificationManager
             )
         }
 
