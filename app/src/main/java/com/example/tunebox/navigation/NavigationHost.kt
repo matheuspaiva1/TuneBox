@@ -3,6 +3,8 @@ package com.example.tunebox.navigation
 import android.icu.text.CaseMap
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.example.tunebox.data.models.UserComment
 import com.example.tunebox.data.repository.CommentRepository
 import com.example.tunebox.data.repository.SpotifyRepository
@@ -46,8 +48,31 @@ fun NavigationHost(
 
         "comments" -> CommentListScreen(
             comments = comments,
-
         )
+
+        "search" -> {
+            val searchViewModel = remember {
+                SearchViewModel(
+                    repository = spotifyRepository,
+                    accessToken = accessToken
+                )
+            }
+            val results by searchViewModel.results.collectAsState()
+
+            SearchScreen(
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = onToggleTheme,
+                results = results,
+                onQueryChange = { searchViewModel.onQueryChange(it) },
+                onResultClick = { result ->
+                    onAlbumClick(result.title, result.subtitle, result.imageUrl)
+                },
+                onFavoriteClick = { /* favoritar */ },
+                onCommentClick = { result ->
+                    onAlbumClick(result.title, result.subtitle, result.imageUrl)
+                }
+            )
+        }
 
 
         "comment" -> CommentScreen(
