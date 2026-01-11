@@ -5,10 +5,11 @@ import androidx.room.RoomDatabase
 import com.example.tunebox.data.models.UserComment
 
 @Database(
-    entities = [UserComment::class],
-    version = 1,
+    entities = [UserComment::class, LikedItem::class],
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun commentDao(): CommentDao
+    abstract fun likesDao(): LikesDao
 }

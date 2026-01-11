@@ -28,7 +28,7 @@ fun TuneBoxBottomNavigation(
     val items = listOf(
         NavigationItem(Icons.Filled.Home, "Home", "home"),
         NavigationItem(Icons.Filled.Search, "Buscar", "search"),
-        NavigationItem(Icons.Filled.Favorite, "Adicionar", "add"),
+        NavigationItem(Icons.Filled.Favorite, "Curtidas", "favorites"),
         NavigationItem(Icons.Outlined.ChatBubbleOutline, "Comentários", "comments"),
         NavigationItem(Icons.Filled.Person, "Perfil", "profile")
     )
@@ -73,8 +73,8 @@ private fun NavigationIconButton(
         Icon(
             imageVector = icon,
             contentDescription = label,
-            tint = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.size(32.dp)
+            tint = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.size(if (isSelected) 36.dp else 32.dp)
         )
     }
 }

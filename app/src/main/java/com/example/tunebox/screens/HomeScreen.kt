@@ -64,8 +64,7 @@ fun HomeScreen(
             context,
             AppDatabase::class.java,
             "tunebox-db"
-        ).build()
-    }
+        ).fallbackToDestructiveMigration().build()    }
 
     val commentRepository = remember {
         CommentRepository(appDatabase.commentDao())
@@ -158,7 +157,8 @@ fun HomeScreen(
                     currentRoute = "comments"
                 },
                 commentRepository = commentRepository,
-                profileViewModel = profileViewModel
+                profileViewModel = profileViewModel,
+                appDatabase = appDatabase
             )
         }
     }

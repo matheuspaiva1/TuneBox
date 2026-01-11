@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -23,7 +24,8 @@ data class SearchResultUi(
     val title: String,      // nome da música/álbum
     val subtitle: String,   // artista
     val imageUrl: String,
-    val artistImageUrl: String // imagem do artista (nova)
+    val artistImageUrl: String, // imagem do artista (nova)
+    val type: String // "track" | "album" | "artist"
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +37,8 @@ fun SearchScreen(
     onQueryChange: (String) -> Unit,
     onResultClick: (SearchResultUi) -> Unit = {},
     onFavoriteClick: (SearchResultUi) -> Unit = {},
-    onCommentClick: (SearchResultUi) -> Unit = {}
+    onCommentClick: (SearchResultUi) -> Unit = {},
+    favoriteIds: Set<String> = emptySet()
 ) {
     var query by remember { mutableStateOf("") }
 
@@ -87,7 +90,8 @@ fun SearchScreen(
                         result = item,
                         onClick = { onResultClick(item) },
                         onFavoriteClick = { onFavoriteClick(item) },
-                        onCommentClick = { onCommentClick(item) }
+                        onCommentClick = { onCommentClick(item) },
+                        isFavorite = favoriteIds.contains(item.id),
                     )
                 }
             }
@@ -100,7 +104,8 @@ fun SearchResultCard(
     result: SearchResultUi,
     onClick: () -> Unit,
     onFavoriteClick: () -> Unit,
-    onCommentClick: () -> Unit
+    onCommentClick: () -> Unit,
+    isFavorite: Boolean,
 ) {
     OutlinedCard(
         modifier = Modifier
@@ -155,7 +160,7 @@ fun SearchResultCard(
             ) {
                 IconButton(onClick = onFavoriteClick) {
                     Icon(
-                        imageVector = Icons.Default.FavoriteBorder,
+                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                         contentDescription = "Favoritar",
                         tint = MaterialTheme.colorScheme.primary
                     )
