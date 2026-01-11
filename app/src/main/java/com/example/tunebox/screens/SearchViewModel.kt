@@ -50,14 +50,16 @@ class SearchViewModel(
                         title = item.name,
                         subtitle = item.artists.joinToString(", ") { it.name },
                         imageUrl = item.album.images.firstOrNull()?.url ?: "",
-                        artistImageUrl = item.artists.firstOrNull()?.images?.firstOrNull()?.url ?: ""
+                        artistImageUrl = item.artists.firstOrNull()?.images?.firstOrNull()?.url ?: "",
+                        type = "track"
                     )
                     is SpotifyAlbum -> SearchResultUi(
                         id = item.id,
                         title = item.name,
                         subtitle = item.artists.joinToString(", ") { it.name },
                         imageUrl = item.images.firstOrNull()?.url ?: "",
-                        artistImageUrl = item.artists.firstOrNull()?.images?.firstOrNull()?.url ?: ""
+                        artistImageUrl = item.artists.firstOrNull()?.images?.firstOrNull()?.url ?: "",
+                        type = "album"
                     )
                     else -> null
                 }
