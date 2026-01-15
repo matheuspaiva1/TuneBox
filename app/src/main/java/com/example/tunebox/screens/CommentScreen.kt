@@ -38,7 +38,7 @@ fun CommentScreen(
     var comment by remember { mutableStateOf(existingComment ?: "") }
 
     Scaffold(
-        topBar = { /* se quiser, botão de voltar aqui */ }
+        topBar = {  }
     ) { innerPadding ->
         Column(
             modifier = Modifier

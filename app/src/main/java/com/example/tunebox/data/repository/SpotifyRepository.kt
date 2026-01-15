@@ -8,7 +8,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import com.example.tunebox.data.models.SpotifyUser
 import com.example.tunebox.data.models.toDomain
 class SpotifyRepository {
-
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://api.spotify.com/")
         .addConverterFactory(GsonConverterFactory.create())

@@ -209,7 +209,7 @@ fun TrackCard(
                 color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(8.dp)
             )
-            .clickable { onClick() }      // <- clique
+            .clickable { onClick() }
             .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically

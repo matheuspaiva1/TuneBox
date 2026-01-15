@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CommentDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertComment(comment: UserComment)
 

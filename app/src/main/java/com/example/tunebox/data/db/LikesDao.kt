@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LikesDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLike(like: LikedItem)
 

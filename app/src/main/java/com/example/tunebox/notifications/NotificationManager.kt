@@ -26,7 +26,7 @@ class NotificationManager(private val context: Context) {
 
     private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Canal para notificações locais
+            // Notificações locais
             val localChannel = NotificationChannel(
                 CHANNEL_ID_LOCAL,
                 "Notificações Locais",
@@ -35,7 +35,7 @@ class NotificationManager(private val context: Context) {
                 description = "Lembretes e notificações do app"
             }
 
-            // Canal para push
+            // Notificações push
             val pushChannel = NotificationChannel(
                 CHANNEL_ID_PUSH,
                 "Notificações Push",
@@ -44,7 +44,7 @@ class NotificationManager(private val context: Context) {
                 description = "Notificações do servidor"
             }
 
-            // Canal para música
+            // Notificações de música
             val musicChannel = NotificationChannel(
                 CHANNEL_ID_MUSIC,
                 "Controle de Música",
