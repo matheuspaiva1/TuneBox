@@ -1,20 +1,18 @@
 package com.example.tunebox.navigation
 
-import android.icu.text.CaseMap
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.example.tunebox.data.models.UserComment
 import com.example.tunebox.data.repository.CommentRepository
-import com.example.tunebox.data.repository.CommentViewModel
+import com.example.tunebox.screens.CommentViewModel
 import com.example.tunebox.data.repository.SpotifyRepository
 import com.example.tunebox.screens.*
 import com.example.tunebox.data.repository.LikeRepository
 import com.example.tunebox.data.repository.LikesViewModel
 import com.example.tunebox.data.db.AppDatabase
 import com.example.tunebox.notifications.NotificationManager
-import retrofit2.http.Url
 
 @Composable
 fun NavigationHost(
@@ -59,7 +57,7 @@ fun NavigationHost(
         "comments" -> CommentListScreen(
             comments = comments,
             viewModel = CommentViewModel(commentRepository),
-            notificationManager = notificationManager // Passe a instância aqui
+            notificationManager = notificationManager
         )
 
         "search" -> {
@@ -99,7 +97,6 @@ fun NavigationHost(
                 notificationManager = notificationManager
             )
         }
-
 
         "comment" -> CommentScreen(
             albumTitle = albumTitle,

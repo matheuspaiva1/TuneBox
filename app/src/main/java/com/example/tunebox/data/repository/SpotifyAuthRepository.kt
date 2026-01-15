@@ -8,7 +8,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SpotifyAuthRepository {
-
     private val retrofit = Retrofit.Builder()
         .baseUrl(SpotifyConstants.AUTH_BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
