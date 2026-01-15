@@ -117,7 +117,8 @@ fun NavigationHost(
                     rating = rating
                 )
                 onAddComment(comment)
-            }
+            },
+            notificationManager = notificationManager
         )
 
         else -> HomeContent(
