@@ -22,14 +22,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.tunebox.data.models.UserComment
-import com.example.tunebox.data.repository.CommentViewModel
+import com.example.tunebox.screens.CommentViewModel
 import com.example.tunebox.notifications.NotificationManager
 
 @Composable
 fun CommentListScreen(
     comments: List<UserComment>,
-    viewModel: CommentViewModel, // Recebe a ViewModel
-    notificationManager: NotificationManager // Adicione este parâmetro
+    viewModel: CommentViewModel,
+    notificationManager: NotificationManager
     ) {
     var editingComment by remember { mutableStateOf<UserComment?>(null) }
 
@@ -74,7 +74,6 @@ fun CommentListScreen(
         }
     }
 
-    // Se houver um comentário sendo editado, mostra o Dialog
     editingComment?.let { comment ->
         EditCommentDialog(
             comment = comment,
@@ -97,7 +96,6 @@ fun EditCommentDialog(
     onDismiss: () -> Unit,
     onConfirm: (UserComment) -> Unit
 ) {
-    // Estados locais para edição antes de salvar
     var text by remember { mutableStateOf(comment.text) }
     var rating by remember { mutableIntStateOf(comment.rating) }
 
@@ -107,8 +105,6 @@ fun EditCommentDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(comment.albumTitle, style = MaterialTheme.typography.titleMedium)
-
-                // Seletor de Estrelas Interativo
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
@@ -137,7 +133,6 @@ fun EditCommentDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    // Cria uma cópia do comentário com os novos dados
                     val updated = comment.copy(text = text, rating = rating)
                     onConfirm(updated)
                 }
@@ -158,7 +153,7 @@ fun CommentListItem(
     comment: UserComment,
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
-    notificationManager: NotificationManager // Adicione este parâmetro
+    notificationManager: NotificationManager
 
 ) {
     var showDeleteConfirmation by remember { mutableStateOf(false) }

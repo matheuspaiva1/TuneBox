@@ -18,12 +18,10 @@ class TuneBoxMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         Log.d("FCM", "Token gerado: $token")
-        // Envie este token para seu backend para guardar
         sendTokenToBackend(token)
     }
 
     private fun sendTokenToBackend(token: String) {
-        // Implementar envio do token para seu servidor
         Log.d("FCM", "Token enviado ao backend: $token")
     }
 }

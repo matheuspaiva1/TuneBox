@@ -6,7 +6,6 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 interface SpotifyAuthService {
-
     @FormUrlEncoded
     @POST("api/token")
     suspend fun getAccessToken(

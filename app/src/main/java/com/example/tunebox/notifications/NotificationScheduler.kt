@@ -31,7 +31,7 @@ class NotificationScheduler(private val context: Context) {
     fun scheduleDailyReminder(
         title: String,
         message: String,
-        hourOfDay: Int = 8 // 8 da manhã
+        hourOfDay: Int = 8
     ) {
         val notificationData = Data.Builder()
             .putString("title", title)
@@ -65,7 +65,7 @@ class NotificationScheduler(private val context: Context) {
             calendar.add(java.util.Calendar.DAY_OF_MONTH, 1)
         }
 
-        return (calendar.timeInMillis - now) / 60000 // em minutos
+        return (calendar.timeInMillis - now) / 60000
     }
 
     fun cancelAllReminders() {
