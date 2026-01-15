@@ -47,7 +47,6 @@ fun SearchScreen(
     Scaffold(
 
     ) { paddingValues ->
-        // Ajuste: aproximar mais a barra do TopAppBar (reduzir o espaço entre título e barra)
         val topPadding = maxOf(paddingValues.calculateTopPadding() - 28.dp, 0.dp)
 
         Column(
