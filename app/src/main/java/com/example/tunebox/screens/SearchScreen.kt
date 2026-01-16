@@ -22,11 +22,11 @@ import com.example.tunebox.notifications.NotificationManager
 
 data class SearchResultUi(
     val id: String,
-    val title: String,      // nome da música/álbum
-    val subtitle: String,   // artista
+    val title: String,
+    val subtitle: String,
     val imageUrl: String,
-    val artistImageUrl: String, // imagem do artista (nova)
-    val type: String // "track" | "album" | "artist"
+    val artistImageUrl: String,
+    val type: String
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +55,7 @@ fun SearchScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(top = topPadding, start = 16.dp, end = 16.dp, bottom = paddingValues.calculateBottomPadding())
         ) {
-            // Barra de busca
+
             OutlinedTextField(
                 value = query,
                 onValueChange = {
@@ -81,7 +81,6 @@ fun SearchScreen(
 
             Spacer(modifier = Modifier.height(2.dp))
 
-            // Lista de resultados
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
@@ -162,7 +161,6 @@ fun SearchResultCard(
                 )
             }
 
-            // Right-side: apenas o ícone de coração, posicionado no canto superior direito do card
             Column(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.Top,

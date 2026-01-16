@@ -21,7 +21,7 @@ import com.example.tunebox.notifications.NotificationManager
 fun LikesScreen(
     viewModel: LikesViewModel,
     onItemClick: (String, String, String) -> Unit,
-    notificationManager: NotificationManager // 1. Adicionado o parâmetro
+    notificationManager: NotificationManager
 ) {
     val likes = viewModel.likesForUser().collectAsState(initial = emptyList())
 

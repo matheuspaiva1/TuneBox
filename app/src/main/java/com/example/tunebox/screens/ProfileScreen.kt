@@ -195,7 +195,7 @@ fun ProfileScreen(
                 onAlbumClick = { album ->
                     onAlbumClick(
                         album.albumTitle,
-                        "", // ID do artista (pode ser vazio como no favoritos)
+                        "",
                         album.coverUrl
                     )
                 }

@@ -24,7 +24,7 @@ class SearchViewModel(
     init {
         viewModelScope.launch {
             _query
-                .debounce(300) // Evita chamadas excessivas à API enquanto o usuário digita
+                .debounce(300)
                 .filter { it.isNotBlank() }
                 .distinctUntilChanged()
                 .collect { query ->
