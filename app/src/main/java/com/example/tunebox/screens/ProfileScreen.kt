@@ -25,8 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.tunebox.data.db.AlbumCommentCount
-import com.example.tunebox.data.models.UserComment
-import java.net.URL
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,7 +65,7 @@ fun ProfileScreen(
                 .padding(
                     start = 16.dp,
                     end = 16.dp,
-                    top = innerPadding.calculateTopPadding(),
+                    top = innerPadding.calculateTopPadding() + 80.dp,
                     bottom = 24.dp
                 )
         ) {
@@ -152,12 +150,12 @@ fun ProfileScreen(
                     }
                 }
             }
-            Spacer(Modifier.height((-60).dp))
+
+            Spacer(Modifier.height(8.dp))
 
             Text(
                 text = "Meus favoritos",
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier.offset(y = (-4).dp),
                 color = MaterialTheme.colorScheme.onBackground
             )
 
@@ -181,14 +179,14 @@ fun ProfileScreen(
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(16.dp))
 
             Text(
                 text = "Meus comentários",
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(16.dp))
 
             AlbumRow(
                 albums = state.mostCommentedAlbums,
