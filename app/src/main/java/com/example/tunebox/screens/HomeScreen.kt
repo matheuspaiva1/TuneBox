@@ -1,7 +1,9 @@
 package com.example.tunebox.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.ExitToApp
@@ -14,13 +16,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.example.tunebox.components.TuneBoxBottomNavigation
 import com.example.tunebox.data.db.AppDatabase
 import com.example.tunebox.data.models.UserComment
 import com.example.tunebox.data.repository.CommentRepository
 import com.example.tunebox.data.repository.SpotifyRepository
-import com.example.tunebox.navigation.NavigationHost
+import com.example.tunebox.navigation.AppNavHost
 import com.example.tunebox.notifications.NotificationManager
 import kotlinx.coroutines.launch
 
@@ -33,14 +37,9 @@ fun HomeScreen(
     onLogout: () -> Unit,
     notificationManager: NotificationManager
 ) {
-    var currentRoute by remember { mutableStateOf("home") }
-
-    var selectedAlbumTitle by remember { mutableStateOf("Rodeo") }
-    var selectedArtistName by remember { mutableStateOf("Travis Scott") }
-    var selectedCoverUrl by remember { mutableStateOf("https://picsum.photos/400") }
-
-    val spotifyRepository = remember { SpotifyRepository() }
+    val navController = rememberNavController()
     var currentUserId by remember { mutableStateOf<String?>(null) }
+    val spotifyRepository = remember { SpotifyRepository() }
 
     LaunchedEffect(accessToken) {
         val user = spotifyRepository.getCurrentUser(accessToken)
@@ -60,32 +59,16 @@ fun HomeScreen(
     }
 
     val context = LocalContext.current
-
     val appDatabase = remember {
-        Room.databaseBuilder(
-            context,
-            AppDatabase::class.java,
-            "tunebox-db"
-        ).fallbackToDestructiveMigration().build()    }
-
-    val commentRepository = remember {
-        CommentRepository(appDatabase.commentDao())
+        Room.databaseBuilder(context, AppDatabase::class.java, "tunebox-db")
+            .fallbackToDestructiveMigration().build()
     }
-
+    val commentRepository = remember { CommentRepository(appDatabase.commentDao()) }
     val profileViewModel = remember {
-        ProfileViewModel(
-            repository = spotifyRepository,
-            accessToken = accessToken,
-            commentRepository = commentRepository,
-            userId = currentUserId!!
-        )
+        ProfileViewModel(spotifyRepository, accessToken, commentRepository, currentUserId!!)
     }
-
-    val commentsFlow = remember(currentUserId) {
-        commentRepository.getCommentsForUser(currentUserId!!)
-    }
+    val commentsFlow = remember(currentUserId) { commentRepository.getCommentsForUser(currentUserId!!) }
     val comments by commentsFlow.collectAsState(initial = emptyList())
-
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -103,14 +86,14 @@ fun HomeScreen(
                 actions = {
                     IconButton(onClick = onToggleTheme) {
                         Icon(
-                            imageVector = if (isDarkTheme) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                            imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
                             contentDescription = "Toggle Theme",
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                     IconButton(onClick = onLogout) {
                         Icon(
-                            imageVector = Icons.Filled.ExitToApp,
+                            imageVector = Icons.Default.ExitToApp,
                             contentDescription = "Logout",
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
@@ -122,47 +105,28 @@ fun HomeScreen(
             )
         },
         bottomBar = {
-            TuneBoxBottomNavigation(
-                currentRoute = currentRoute,
-                onNavigate = { currentRoute = it }
-            )
+            TuneBoxBottomNavigation(navController = navController)
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(paddingValues)
-        ) {
-            NavigationHost(
-                currentRoute = currentRoute,
-                isDarkTheme = isDarkTheme,
-                onToggleTheme = onToggleTheme,
-                accessToken = accessToken,
-                onLogout = onLogout,
-                spotifyRepository = spotifyRepository,
-                albumTitle = selectedAlbumTitle,
-                artistName = selectedArtistName,
-                coverUrl = selectedCoverUrl,
-                onAlbumClick = { title, artist, cover ->
-                    selectedAlbumTitle = title
-                    selectedArtistName = artist
-                    selectedCoverUrl = cover
-                    currentRoute = "comment"
-                },
-                currentUserId = currentUserId!!,
-                comments = comments,
-                onAddComment = { newComment ->
-                    scope.launch {
-                        commentRepository.addComment(newComment)
-                    }
-                    currentRoute = "comments"
-                },
-                commentRepository = commentRepository,
-                profileViewModel = profileViewModel,
-                appDatabase = appDatabase,
-                notificationManager = notificationManager
-            )
-        }
+        AppNavHost(
+            navController = navController,
+            paddingValues = paddingValues,
+            isDarkTheme = isDarkTheme,
+            onToggleTheme = onToggleTheme,
+            accessToken = accessToken,
+            onLogout = onLogout,
+            spotifyRepository = spotifyRepository,
+            currentUserId = currentUserId!!,
+            comments = comments,
+            onAddComment = { newComment ->
+                scope.launch {
+                    commentRepository.addComment(newComment)
+                }
+            },
+            commentRepository = commentRepository,
+            profileViewModel = profileViewModel,
+            appDatabase = appDatabase,
+            notificationManager = notificationManager
+        )
     }
 }
