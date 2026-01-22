@@ -15,36 +15,45 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.tunebox.data.manager.TokenManager
 import com.example.tunebox.data.repository.SpotifyAuthRepository
+import com.example.tunebox.di.appModule
 import com.example.tunebox.notifications.NotificationManager
 import com.example.tunebox.notifications.NotificationScheduler
 import com.example.tunebox.screens.AuthScreen
 import com.example.tunebox.screens.HomeScreen
 import com.example.tunebox.screens.LoginWithSpotifyScreen
-import com.example.tunebox.screens.ProfileScreen
 import com.example.tunebox.ui.theme.TuneBoxTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var tokenManager: TokenManager
-    private lateinit var notificationManager: NotificationManager
-    private lateinit var notificationScheduler: NotificationScheduler
-
-    private val authRepository = SpotifyAuthRepository()
+    private val tokenManager: TokenManager by inject()
+    private val notificationManager: NotificationManager by inject()
+    private val notificationScheduler: NotificationScheduler by inject()
+    private val authRepository: SpotifyAuthRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        notificationManager = NotificationManager(this)
-        notificationScheduler = NotificationScheduler(this)
 
-        tokenManager = TokenManager(this)
+        try {
+            startKoin {
+                androidContext(this@MainActivity)
+                modules(appModule)
+            }
+        } catch (e: Exception) {
+            // Koin already started
+        }
 
         setContent {
             var isDarkTheme by rememberSaveable { mutableStateOf(false) }
             var currentScreen by rememberSaveable { mutableStateOf("auth") }
             var accessToken by rememberSaveable { mutableStateOf("") }
+
 
             TuneBoxTheme(darkTheme = isDarkTheme) {
                 Surface(
@@ -66,10 +75,8 @@ class MainActivity : ComponentActivity() {
                             LoginWithSpotifyScreen(
                                 onCodeReceived = { code ->
                                     CoroutineScope(Dispatchers.Main).launch {
-                                        println("SPOTIFY CODE: $code")
                                         val response = authRepository.exchangeCodeForToken(code)
                                         if (response != null) {
-                                            println("MAIN ACESS TOKEN: ${response.access_token}")
                                             tokenManager.saveTokens(
                                                 accessToken = response.access_token,
                                                 refreshToken = response.refresh_token
@@ -91,8 +98,6 @@ class MainActivity : ComponentActivity() {
                                         } else {
                                             currentScreen = "auth"
                                         }
-
-
                                     }
                                 }
                             )
@@ -136,4 +141,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-

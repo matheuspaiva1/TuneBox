@@ -1,29 +1,24 @@
 package com.example.tunebox.navigation
+
 import android.net.Uri
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.tunebox.data.db.AppDatabase
 import com.example.tunebox.data.models.UserComment
 import com.example.tunebox.data.repository.CommentRepository
-import com.example.tunebox.data.repository.LikeRepository
 import com.example.tunebox.data.repository.LikesViewModel
-import com.example.tunebox.data.repository.SpotifyRepository
 import com.example.tunebox.notifications.NotificationManager
 import com.example.tunebox.screens.*
 import com.example.tunebox.ui.navigation.Screen
-import com.example.tunebox.screens.CommentViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.tunebox.screens.CommentViewModelFactory
-import com.example.tunebox.data.repository.LikesViewModelFactory
-import com.example.tunebox.screens.SearchViewModelFactory
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 
 @Composable
@@ -34,21 +29,17 @@ fun AppNavHost(
     onToggleTheme: () -> Unit,
     accessToken: String,
     onLogout: () -> Unit,
-    spotifyRepository: SpotifyRepository,
     currentUserId: String,
     comments: List<UserComment>,
     onAddComment: (UserComment) -> Unit,
-    commentRepository: CommentRepository,
     profileViewModel: ProfileViewModel,
-    appDatabase: AppDatabase,
     notificationManager: NotificationManager
 ) {
+    val commentRepository: CommentRepository = koinInject()
 
-    val likesViewModel: LikesViewModel = viewModel(
-        factory = LikesViewModelFactory(appDatabase.likesDao(), currentUserId)
+    val likesViewModel: LikesViewModel = koinViewModel(
+        parameters = { parametersOf(currentUserId) }
     )
-
-    val likeRepository = remember { LikeRepository(appDatabase.likesDao()) }
 
     NavHost(
         navController = navController,
@@ -77,9 +68,7 @@ fun AppNavHost(
         }
 
         composable(Screen.Comments.route) {
-            val commentViewModel: CommentViewModel = viewModel(
-                factory = CommentViewModelFactory(commentRepository)
-            )
+            val commentViewModel: CommentViewModel = koinViewModel()
 
             CommentListScreen(
                 comments = comments,
@@ -89,8 +78,8 @@ fun AppNavHost(
         }
 
         composable(Screen.Search.route) {
-            val searchViewModel: SearchViewModel = viewModel(
-                factory = SearchViewModelFactory(spotifyRepository, accessToken)
+            val searchViewModel: SearchViewModel = koinViewModel(
+                parameters = { parametersOf(accessToken) }
             )
 
             val results by searchViewModel.results.collectAsState()

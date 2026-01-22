@@ -1,0 +1,25 @@
+Index: app/src/main/java/com/example/tunebox/components/BottomNavigationBar.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.tunebox.components\r\n\r\nimport androidx.compose.material.icons.Icons\r\nimport androidx.compose.material.icons.filled.Comment\r\nimport androidx.compose.material.icons.filled.Favorite\r\nimport androidx.compose.material.icons.filled.Home\r\nimport androidx.compose.material.icons.filled.Person\r\nimport androidx.compose.material.icons.filled.Search\r\nimport androidx.compose.material3.*\r\nimport androidx.compose.runtime.*\r\nimport androidx.compose.ui.res.stringResource\r\nimport androidx.navigation.NavController\r\nimport androidx.navigation.NavDestination.Companion.hierarchy\r\nimport androidx.navigation.NavGraph.Companion.findStartDestination\r\nimport androidx.navigation.compose.currentBackStackEntryAsState\r\nimport com.example.tunebox.R\r\nimport com.example.tunebox.ui.navigation.Screen\r\n\r\n@Composable\r\nfun TuneBoxBottomNavigation(navController: NavController) {\r\n    val currentDestination by navController.currentBackStackEntryAsState()\r\n    val screens = listOf(\r\n        Screen.Home, Screen.Search, Screen.Favorites,\r\n        Screen.Comments, Screen.Profile\r\n    )\r\n\r\n    NavigationBar ( containerColor = MaterialTheme.colorScheme.primary,\r\n        contentColor = MaterialTheme.colorScheme.onPrimary\r\n    ){\r\n        screens.forEach { screen ->\r\n            val selected = currentDestination?.destination?.hierarchy\r\n                ?.any { it.route == screen.route } == true\r\n\r\n            NavigationBarItem(\r\n                icon = {\r\n                    Icon(\r\n                        imageVector = when (screen) {\r\n                            Screen.Home -> Icons.Default.Home\r\n                            Screen.Search -> Icons.Default.Search\r\n                            Screen.Favorites -> Icons.Default.Favorite\r\n                            Screen.Comments -> Icons.Default.Comment\r\n                            Screen.Profile -> Icons.Default.Person\r\n                            else -> Icons.Default.Home\r\n                        },\r\n                        contentDescription = null\r\n                    )\r\n                },\r\n                label = {\r\n                    Text(\r\n                        when (screen) {\r\n                            Screen.Home -> \"Home\"\r\n                            Screen.Search -> \"Search\"\r\n                            Screen.Favorites -> \"Favorites\"\r\n                            Screen.Comments -> \"Comments\"\r\n                            Screen.Profile -> \"Profile\"\r\n                            else -> \"Home\"\r\n                        }\r\n                    )\r\n                },\r\n                selected = selected,\r\n                onClick = {\r\n                    navController.navigate(screen.route) {\r\n                        popUpTo(navController.graph.findStartDestination().id) {\r\n                            saveState = true\r\n                        }\r\n                        launchSingleTop = true\r\n                        restoreState = true\r\n                    }\r\n                }\r\n            )\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/tunebox/components/BottomNavigationBar.kt b/app/src/main/java/com/example/tunebox/components/BottomNavigationBar.kt
+--- a/app/src/main/java/com/example/tunebox/components/BottomNavigationBar.kt	(revision 14ccb6643c7d8bff6ec31fd3c9fb18de4f762d01)
++++ b/app/src/main/java/com/example/tunebox/components/BottomNavigationBar.kt	(date 1769056083624)
+@@ -49,10 +49,10 @@
+                     Text(
+                         when (screen) {
+                             Screen.Home -> "Home"
+-                            Screen.Search -> "Search"
+-                            Screen.Favorites -> "Favorites"
+-                            Screen.Comments -> "Comments"
+-                            Screen.Profile -> "Profile"
++                            Screen.Search -> "Buscar"
++                            Screen.Favorites -> "Favoritos"
++                            Screen.Comments -> "Comentário"
++                            Screen.Profile -> "Perfil"
+                             else -> "Home"
+                         }
+                     )

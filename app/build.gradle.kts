@@ -99,6 +99,13 @@ dependencies {
     // WorkManager (para notificações agendadas)
     implementation("androidx.work:work-runtime-ktx:2.9.0")
 
+    //Navegação
     implementation("androidx.navigation:navigation-compose:2.8.1")
+
+    //Koin
+    implementation("io.insert-koin:koin-core:3.5.6")
+    implementation("io.insert-koin:koin-android:3.5.6")
+    implementation("io.insert-koin:koin-androidx-compose:3.5.6")
+    implementation("io.insert-koin:koin-androidx-navigation:3.5.6")
 
 }

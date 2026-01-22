@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.tunebox.MainActivity
-import com.example.tunebox.R
 
 class NotificationManager(private val context: Context) {
 

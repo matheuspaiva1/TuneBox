@@ -49,10 +49,10 @@ fun TuneBoxBottomNavigation(navController: NavController) {
                     Text(
                         when (screen) {
                             Screen.Home -> "Home"
-                            Screen.Search -> "Search"
-                            Screen.Favorites -> "Favorites"
-                            Screen.Comments -> "Comments"
-                            Screen.Profile -> "Profile"
+                            Screen.Search -> "Buscar"
+                            Screen.Favorites -> "Favoritos"
+                            Screen.Comments -> "Comentário"
+                            Screen.Profile -> "Perfil"
                             else -> "Home"
                         }
                     )
